@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">My Java Apps</string>
+
+    <string name="change_image">Change Image</string>
+    <string name="context_menu">Context Menu</string>
+
+    <string-array name="dashboard_spinner">
+        <item>Kathmandu</item>
+        <item>Bhaktapur</item>
+        <item>Lalitpur</item>
+    </string-array>
+
+    <string-array name="country_spinner">
+        <item>Nepal</item>
+        <item>India</item>
+        <item>China</item>
+        <item>UK</item>
+        <item>USA</item>
+    </string-array>
+</resources>
