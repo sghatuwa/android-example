@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.DashBoard"
-            android:label="DashBoard">
+            android:label="DashBoard"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity android:name=".activity.Signup"

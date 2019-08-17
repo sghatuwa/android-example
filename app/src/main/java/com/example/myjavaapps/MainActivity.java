@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.myjavaapps.activity.DashBoard;
 import com.example.myjavaapps.activity.Signup;
+import com.example.myjavaapps.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         Intent dashBoardIntent = new Intent(MainActivity.this, DashBoard.class);
         startActivity(dashBoardIntent);
         finish();
+        Utils.getValue();
     }
 
     private void initUI() {

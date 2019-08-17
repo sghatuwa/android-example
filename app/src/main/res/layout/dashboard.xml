@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -73,6 +78,36 @@
         </Spinner>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/popupmenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Popup Menu"/>
+    </LinearLayout>
+
+    <ToggleButton
+        android:id="@+id/toggle_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/SwitchTheme"
+        android:text="Toggle Button"/>
+
+    <Switch
+        android:id="@+id/fine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fine?"
+        android:theme="@style/SwitchTheme"/>
+    <Button
+        android:id="@+id/check_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Switch / Toggle"
+        android:onClick="checkSwitchToggle"/>
     <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
@@ -83,4 +118,5 @@
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></WebView>
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,10 +1,16 @@
 package com.example.myjavaapps.activity;
 
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -18,18 +24,24 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.NotificationCompat;
 
 import com.example.myjavaapps.MainActivity;
 import com.example.myjavaapps.R;
 import com.example.myjavaapps.adapter.SpinnerAdapter;
+import com.example.myjavaapps.fragment.MyDialogFragment;
+import com.example.myjavaapps.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,19 +50,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DashBoard extends AppCompatActivity {
+public class DashBoard extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    Button showDate, showTime, change_image, context_menu;
+    Button showDate, showTime, change_image, context_menu, popupmenu, check_switch;
     TextView setDate, setTime;
     ImageView image;
     WebView webview;
     Spinner spinner, dynamicSpinner;
+    ToggleButton toggleButton;
+    Switch aSwitch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
         initUI();
+        Utils.getValue();
         showDateTime();
         changeImage();
 
@@ -80,6 +95,16 @@ public class DashBoard extends AppCompatActivity {
             }
         });
         initWebView();
+
+        popupmenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(DashBoard.this, view);
+                popupMenu.inflate(R.menu.dashboard_popupmenu);
+                popupMenu.setOnMenuItemClickListener(DashBoard.this);
+                popupMenu.show();
+            }
+        });
     }
 
     private void initWebView() {
@@ -155,6 +180,10 @@ public class DashBoard extends AppCompatActivity {
         webview = findViewById(R.id.webview);
         spinner = findViewById(R.id.spinner);
         dynamicSpinner = findViewById(R.id.dynamicSpinner);
+        popupmenu = findViewById(R.id.popupmenu);
+        check_switch = findViewById(R.id.check_switch);
+        toggleButton = findViewById(R.id.toggle_btn);
+        aSwitch = findViewById(R.id.fine);
         registerForContextMenu(context_menu);
         registerForContextMenu(change_image);
     }
@@ -231,5 +260,73 @@ public class DashBoard extends AppCompatActivity {
         alertDialog.setTitle("Confirmation");
         alertDialog.setIcon(R.drawable.test);
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId()  == R.id.upload){
+            return true;
+        } else if(item.getItemId() == R.id.viewDialog){
+        Toast.makeText(this, "Clicked: "+item.getTitle(), Toast.LENGTH_SHORT).show();
+            MyDialogFragment myDialogFragment = new MyDialogFragment();
+            myDialogFragment.setCancelable(false);
+            myDialogFragment.show(getSupportFragmentManager(), "myDialog");
+        } else if(item.getItemId() == R.id.view_notification){
+            NotificationManager notifManager = null;
+
+            final int NOTIFY_ID = 0; // ID of notification
+            String id = "asfdkhasdjhfjsdfh";
+            String title = "Title";
+            Intent intent;
+            PendingIntent pendingIntent;
+            NotificationCompat.Builder builder;
+            if (notifManager == null) {
+                notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel mChannel = notifManager.getNotificationChannel(id);
+                if (mChannel == null) {
+                    mChannel = new NotificationChannel(id, title, importance);
+                    mChannel.enableVibration(true);
+                    mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    notifManager.createNotificationChannel(mChannel);
+                }
+                builder = new NotificationCompat.Builder(this, id);
+                intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+                builder.setContentTitle("Title")                            // required
+                        .setSmallIcon(android.R.drawable.ic_popup_reminder)   // required
+                        .setContentText("Details Message Here") // required
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            }
+            else {
+                builder = new NotificationCompat.Builder(this, id);
+                intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+                builder.setContentTitle("Title")                            // required
+                        .setSmallIcon(android.R.drawable.ic_popup_reminder)   // required
+                        .setContentText("askjhfkashdf") // required
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                        .setPriority(Notification.PRIORITY_HIGH);
+            }
+            Notification notification = builder.build();
+            notifManager.notify(NOTIFY_ID, notification);
+        }
+        return false;
+    }
+
+    public void checkSwitchToggle(View view){
+        boolean toggle = toggleButton.isChecked();
+        boolean switchh = aSwitch.isChecked();
+        Toast.makeText(this, "Toggle: "+toggle +" >> "+switchh  , Toast.LENGTH_SHORT).show();
     }
 }
