@@ -2,8 +2,11 @@ package com.example.myjavaapps.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.myjavaapps.data.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -48,5 +51,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long status = db.insert(TABLE_NAME, USER_ID, contentValues);
         db.close();
         return (status != -1);
+    }
+
+    public boolean validateUser(String username, String password){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.beginTransaction();
+
+        String whereClauase = USER_USERNAME+ " = ? AND "+USER_PASSWORD +" = ?";
+        String[] whereArgs = new String[]{
+                username, password
+        };
+        Cursor cursor = db.query(TABLE_NAME, null, whereClauase, whereArgs, null,
+                null, null);
+        boolean status = false;
+        if(cursor.getCount()>0){
+            status = true;
+        }
+        cursor.close();
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+        return status;
+    }
+
+    public User getUserData(String username){
+        User user = null;
+        SQLiteDatabase db =this.getReadableDatabase();
+        db.beginTransaction();
+        String whereClauase = USER_USERNAME+ " = ?";
+        String[] whereArgs = new String[]{
+                username
+        };
+        Cursor cursor = db.query(TABLE_NAME, null, whereClauase, whereArgs, null,
+                null, null);
+        if(cursor.getCount()> 0){
+            cursor.moveToFirst();
+            do{
+                user = new User(cursor.getInt(0), cursor.getString(1),
+                        cursor.getString(2), cursor.getString(3), cursor.getString(4));
+                System.out.println("cursor.getString(1) = " + cursor.getString(1));
+                System.out.println("cursor.getString(2) = " + cursor.getString(2));
+            }while(cursor.moveToNext());
+        }
+        return user;
     }
 }

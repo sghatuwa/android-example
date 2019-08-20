@@ -13,7 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myjavaapps.activity.DashBoard;
+import com.example.myjavaapps.activity.Home;
 import com.example.myjavaapps.activity.Signup;
+import com.example.myjavaapps.database.DatabaseHelper;
 import com.example.myjavaapps.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     final String loggedIn = "loggedIn";
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
+    DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
                 String username = uname.getText().toString();
                 String pwd = password.getText().toString();
 
-                if(username.equals("admin") && pwd.equals("admin")){
+                if(databaseHelper.validateUser(username, pwd)){
                     Toast.makeText(MainActivity.this, "Congratulation", Toast.LENGTH_LONG).show();
                     editor.putBoolean(loggedIn, true);
                     editor.putString("username", username);
                     editor.apply();
                     startDashBoard();
-                } else{
+                } else {
                     err_msg.setVisibility(View.VISIBLE);
                     Toast.makeText(MainActivity.this, "Opps!!! Sorry", Toast.LENGTH_LONG).show();
                 }
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDashBoard() {
-        Intent dashBoardIntent = new Intent(MainActivity.this, DashBoard.class);
+        Intent dashBoardIntent = new Intent(MainActivity.this, Home.class);
         startActivity(dashBoardIntent);
         finish();
         Utils.getValue();
