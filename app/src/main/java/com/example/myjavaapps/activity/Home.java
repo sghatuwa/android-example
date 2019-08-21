@@ -18,7 +18,7 @@ import com.example.myjavaapps.database.DatabaseHelper;
 
 public class Home extends AppCompatActivity {
 
-    Button edit, reset, collection;
+    Button edit, reset, collection, custom_list;
     EditText email, username, password, confirm_password;
     RadioButton male, female;
     DatabaseHelper databaseHelper = new DatabaseHelper(this);
@@ -31,6 +31,7 @@ public class Home extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         collection = findViewById(R.id.collection);
         edit = findViewById(R.id.edit_btn);
+        custom_list = findViewById(R.id.custom_list);
         reset = findViewById(R.id.reset_btn);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -47,15 +48,35 @@ public class Home extends AppCompatActivity {
         });
         String uname = sharedPreferences.getString("username", "");
         Toast.makeText(this, "Username: "+uname, Toast.LENGTH_SHORT).show();
-        User user = databaseHelper.getUserData(uname);
+        final User user = databaseHelper.getUserData(uname);
         email.setText(user.getEmail());
         username.setText(user.getUsername());
         password.setText(user.getPassword());
-
+        username.setEnabled(false);
         if(user.getGender().equals(male.getText().toString())){
             male.setChecked(true);
         } else if(user.getGender().equals(female.getText().toString())){
             female.setChecked(true);
         }
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                user.setEmail(email.getText().toString());
+                user.setPassword(password.getText().toString());
+                String gender = male.getText().toString();
+                if(female.isChecked())
+                    gender = female.getText().toString();
+                user.setGender(gender);
+                databaseHelper.updateuserData(user);
+            }
+        });
+
+        custom_list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Home.this, MyCustomList.class));
+            }
+        });
     }
 }

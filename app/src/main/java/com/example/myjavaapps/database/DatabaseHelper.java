@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.myjavaapps.data.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "myjava.db";
@@ -93,6 +96,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 System.out.println("cursor.getString(2) = " + cursor.getString(2));
             }while(cursor.moveToNext());
         }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
         return user;
+    }
+
+    public boolean updateuserData(User user){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        String whereClauase = USER_USERNAME+ " = ?";
+        String[] whereArgs = new String[]{
+                user.getUsername()
+        };
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USER_EMAIL, user.getEmail());
+        contentValues.put(USER_PASSWORD, user.getPassword());
+        contentValues.put(USER_GENDER, user.getGender());
+
+        int result = db.update(TABLE_NAME, contentValues, whereClauase, whereArgs);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+        System.out.println("result = " + result);
+        return (result > 0);
+    }
+
+    public List<User> getAllUserData(){
+        List<User> userList = new ArrayList<>();
+        SQLiteDatabase db =this.getReadableDatabase();
+        db.beginTransaction();
+
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null,
+                null, null);
+        if(cursor.getCount()> 0){
+            cursor.moveToFirst();
+            do{
+                User user = new User(cursor.getInt(0), cursor.getString(1),
+                        cursor.getString(2), cursor.getString(3), cursor.getString(4));
+                userList.add(user);
+                System.out.println("cursor.getString(1) = " + cursor.getString(1));
+                System.out.println("cursor.getString(2) = " + cursor.getString(2));
+            }while(cursor.moveToNext());
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+        return userList;
     }
 }

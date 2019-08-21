@@ -18,7 +18,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <EditText
@@ -85,4 +85,18 @@
                 android:text="Reset" />
         </LinearLayout>
     </LinearLayout>
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/custom_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom List"/>
+        </LinearLayout>
+    </HorizontalScrollView>
 </LinearLayout>

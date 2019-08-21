@@ -31,6 +31,9 @@
         </activity>
         <activity android:name=".activity.Home"
             android:label="Home"/>
+        <activity android:name=".activity.MyCustomList"
+            android:parentActivityName=".activity.Home"
+            android:label="List" />
     </application>
 
 </manifest>
