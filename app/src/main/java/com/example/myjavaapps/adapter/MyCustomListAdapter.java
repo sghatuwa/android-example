@@ -30,12 +30,12 @@ public class MyCustomListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return users.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return users.get(i).getId();
     }
 
     @Override
@@ -48,8 +48,8 @@ public class MyCustomListAdapter extends BaseAdapter {
         TextView email = view.findViewById(R.id.email);
         username.setText(users.get(i).getUsername());
         email.setText(users.get(i).getEmail());
-        if(i%2 == 0)
-            logo.setVisibility(View.GONE);
+//        if(i%2 == 0)
+//            logo.setVisibility(View.GONE);
         return view;
     }
 }
