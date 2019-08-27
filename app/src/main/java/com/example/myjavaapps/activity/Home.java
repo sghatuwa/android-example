@@ -3,22 +3,26 @@ package com.example.myjavaapps.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myjavaapps.MainActivity;
 import com.example.myjavaapps.R;
 import com.example.myjavaapps.data.User;
 import com.example.myjavaapps.database.DatabaseHelper;
 
 public class Home extends AppCompatActivity {
 
-    Button edit, reset, collection, custom_list;
+    Button edit, reset, collection, custom_list, module_dialog;
     EditText email, username, password, confirm_password;
     RadioButton male, female;
     DatabaseHelper databaseHelper = new DatabaseHelper(this);
@@ -33,6 +37,7 @@ public class Home extends AppCompatActivity {
         edit = findViewById(R.id.edit_btn);
         custom_list = findViewById(R.id.custom_list);
         reset = findViewById(R.id.reset_btn);
+        module_dialog = findViewById(R.id.module_dialog);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         username = findViewById(R.id.username);
@@ -78,5 +83,43 @@ public class Home extends AppCompatActivity {
                 startActivity(new Intent(Home.this, MyCustomList.class));
             }
         });
+
+        module_dialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                MyLibraryDialog myDialogFragment = new MyLibraryDialog("Clears");
+//                myDialogFragment.setCancelable(false);
+//                myDialogFragment.show(getSupportFragmentManager(), "myDialog");
+
+//                new SweetAlertDialog(getApplicationContext(), SweetAlertDialog.ERROR_TYPE)
+//                        .setTitleText("Oops...")
+//                        .setContentText("Something went wrong!")
+//                        .show();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dashboard_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.about){
+            Toast.makeText(this, "About Menu Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        }else if(id ==R.id.logout){
+            SharedPreferences preferences = getSharedPreferences("user", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.apply();
+            startActivity(new Intent(Home.this,
+                    MainActivity.class));
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

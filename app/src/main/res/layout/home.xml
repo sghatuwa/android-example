@@ -97,6 +97,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Custom List"/>
+            <Button
+                android:id="@+id/module_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show Dialog From Module"/>
         </LinearLayout>
     </HorizontalScrollView>
 </LinearLayout>
