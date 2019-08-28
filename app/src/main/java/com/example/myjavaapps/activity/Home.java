@@ -2,6 +2,7 @@ package com.example.myjavaapps.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,8 @@ import com.example.myjavaapps.MainActivity;
 import com.example.myjavaapps.R;
 import com.example.myjavaapps.data.User;
 import com.example.myjavaapps.database.DatabaseHelper;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Home extends AppCompatActivity {
 
@@ -91,10 +94,10 @@ public class Home extends AppCompatActivity {
 //                myDialogFragment.setCancelable(false);
 //                myDialogFragment.show(getSupportFragmentManager(), "myDialog");
 
-//                new SweetAlertDialog(getApplicationContext(), SweetAlertDialog.ERROR_TYPE)
-//                        .setTitleText("Oops...")
-//                        .setContentText("Something went wrong!")
-//                        .show();
+                new SweetAlertDialog(view.getContext(), SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("Good job!")
+                        .setContentText("You clicked the button!")
+                        .show();
             }
         });
     }
