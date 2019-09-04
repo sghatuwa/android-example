@@ -102,6 +102,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Show Dialog From Module"/>
+
+            <Button
+                android:id="@+id/download_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Download File"/>
+            <Button
+                android:id="@+id/play_songs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Play Songs"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/storetosd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Store to SD" />
         </LinearLayout>
     </HorizontalScrollView>
 </LinearLayout>
