@@ -127,6 +127,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Store to SD" />
+            <Button
+                android:text="Play"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnPlayVideo"
+                android:onClick="playVideo" />
         </LinearLayout>
     </HorizontalScrollView>
+
+
+
+    <VideoView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/videoView" />
 </LinearLayout>

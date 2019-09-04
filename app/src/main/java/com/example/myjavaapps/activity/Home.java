@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,8 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,6 +56,8 @@ public class Home extends AppCompatActivity {
     Button edit, reset, collection, custom_list, module_dialog, download_file, play_songs, storetosd;
     EditText email, username, password, confirm_password;
     RadioButton male, female;
+    VideoView vid;
+
     DatabaseHelper databaseHelper = new DatabaseHelper(this);
     SharedPreferences sharedPreferences;
     // Progress Dialog
@@ -86,7 +91,7 @@ public class Home extends AppCompatActivity {
         confirm_password = findViewById(R.id.confirm_password);
         male = findViewById(R.id.male);
         female = findViewById(R.id.female);
-
+        vid = findViewById(R.id.videoView);
         collection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -381,5 +386,20 @@ public class Home extends AppCompatActivity {
             Toast.makeText(context,
                     message, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void playVideo(View View){
+        MediaController m = new MediaController(this);
+        vid.setMediaController(m);
+        String path = "android.resource://com.example.myjavaapps/"+R.raw.video;
+        Uri u = Uri.parse(path);
+        vid.setVideoURI(u);
+        vid.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setVolume(50, 0);
+            }
+        });
+        vid.start();
     }
 }
