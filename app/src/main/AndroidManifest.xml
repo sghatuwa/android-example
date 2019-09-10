@@ -35,6 +35,8 @@
         <activity android:name=".activity.MyCustomList"
             android:parentActivityName=".activity.Home"
             android:label="List" />
+        <activity android:name=".activity.Login"
+            android:label="login" />
     </application>
 
 </manifest>

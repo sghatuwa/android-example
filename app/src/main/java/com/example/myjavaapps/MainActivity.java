@@ -2,10 +2,14 @@ package com.example.myjavaapps;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +21,25 @@ import com.example.myjavaapps.activity.Home;
 import com.example.myjavaapps.activity.Signup;
 import com.example.myjavaapps.database.DatabaseHelper;
 import com.example.myjavaapps.utils.Utils;
+
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,16 +77,17 @@ public class MainActivity extends AppCompatActivity {
                 String username = uname.getText().toString();
                 String pwd = password.getText().toString();
 
-                if(databaseHelper.validateUser(username, pwd)){
-                    Toast.makeText(MainActivity.this, "Congratulation", Toast.LENGTH_LONG).show();
-                    editor.putBoolean(loggedIn, true);
-                    editor.putString("username", username);
-                    editor.apply();
-                    startDashBoard();
-                } else {
-                    err_msg.setVisibility(View.VISIBLE);
-                    Toast.makeText(MainActivity.this, "Opps!!! Sorry", Toast.LENGTH_LONG).show();
-                }
+                new ValidateLogin(view.getContext(), "", "").execute();
+//                if(databaseHelper.validateUser(username, pwd)){
+//                    Toast.makeText(MainActivity.this, "Congratulation", Toast.LENGTH_LONG).show();
+//                    editor.putBoolean(loggedIn, true);
+//                    editor.putString("username", username);
+//                    editor.apply();
+//                    startDashBoard();
+//                } else {
+//                    err_msg.setVisibility(View.VISIBLE);
+//                    Toast.makeText(MainActivity.this, "Opps!!! Sorry", Toast.LENGTH_LONG).show();
+//                }
             }
         });
 
@@ -99,5 +123,79 @@ public class MainActivity extends AppCompatActivity {
         reset_btn = findViewById(R.id.reset_btn);
         forgotpwd = findViewById(R.id.forgotpwd);
         signup = findViewById(R.id.signup);
+    }
+
+    class ValidateLogin extends AsyncTask<Void, Void, Boolean>{
+
+        private ProgressDialog progressDialog;
+
+        String uname, pwd;
+        Context context;
+        public ValidateLogin(Context context, String uname, String pwd){
+            this.context = context;
+            this.uname = uname;
+            this.pwd = pwd;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            this.progressDialog = new ProgressDialog(context);
+            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            this.progressDialog.setCancelable(false);
+            this.progressDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                JSONObject postDataParams = new JSONObject()
+                        .put("email", "eve.holt@reqres.in")
+                        .put("password", "cityslicka");
+                URL url = new URL("https://reqres.in/api/login");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(20000);
+                conn.setConnectTimeout(20000);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json; utf-8");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(os, "UTF-8"));
+                writer.write(postDataParams.toString());
+                writer.flush();
+                writer.close();
+                os.close();
+
+                int responseCode=conn.getResponseCode();
+                System.out.println("responseCode = " + responseCode);
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+
+                    BufferedReader in=new BufferedReader( new InputStreamReader(conn.getInputStream()));
+                    StringBuffer sb = new StringBuffer("");
+                    String line="";
+                    while((line = in.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    in.close();
+                    return true;
+                }
+                return false;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("Error: ", e.getMessage());
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            Toast.makeText(context, "Status: "+aBoolean, Toast.LENGTH_SHORT).show();
+            this.progressDialog.dismiss();
+        }
     }
 }

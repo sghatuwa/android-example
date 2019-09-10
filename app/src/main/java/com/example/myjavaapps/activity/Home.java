@@ -1,6 +1,5 @@
 package com.example.myjavaapps.activity;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -36,7 +34,6 @@ import com.example.myjavaapps.MainActivity;
 import com.example.myjavaapps.R;
 import com.example.myjavaapps.data.User;
 import com.example.myjavaapps.database.DatabaseHelper;
-import com.example.myjavaapps.utils.DownloadFileFromURL;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -53,7 +50,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Home extends AppCompatActivity {
 
-    Button edit, reset, collection, custom_list, module_dialog, download_file, play_songs, storetosd;
+    Button edit, reset, collection, custom_list, module_dialog, download_file, play_songs, storetosd, view_Constraint;
     EditText email, username, password, confirm_password;
     RadioButton male, female;
     VideoView vid;
@@ -86,6 +83,7 @@ public class Home extends AppCompatActivity {
         download_file = findViewById(R.id.download_file);
         play_songs = findViewById(R.id.play_songs);
         storetosd = findViewById(R.id.storetosd);
+        view_Constraint = findViewById(R.id.view_Constraint);
         password = findViewById(R.id.password);
         username = findViewById(R.id.username);
         confirm_password = findViewById(R.id.confirm_password);
@@ -177,6 +175,12 @@ public class Home extends AppCompatActivity {
                     generateNoteOnSD(getApplicationContext(), "file.txt", "This is test");
                 else
                     requestPermission();
+            }
+        });
+        view_Constraint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Home.this, Login.class));
             }
         });
     }
