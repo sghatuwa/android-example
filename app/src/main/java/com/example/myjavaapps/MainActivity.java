@@ -1,11 +1,15 @@
 package com.example.myjavaapps;
 
 import android.app.ProgressDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,12 +18,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myjavaapps.activity.Home;
 import com.example.myjavaapps.activity.Signup;
 import com.example.myjavaapps.database.DatabaseHelper;
 import com.example.myjavaapps.receiver.ConnectionReceiver;
+import com.example.myjavaapps.services.NetworkSchedulerService;
 import com.example.myjavaapps.utils.Utils;
 
 import org.json.JSONObject;
@@ -60,6 +66,22 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent("com.example.myjavaapps.SOME_ACTION");
         sendBroadcast(intent);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            scheduleJob();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void scheduleJob() {
+        JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
+                .setRequiresCharging(true)
+                .setMinimumLatency(1000)
+                .setOverrideDeadline(2000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(myJob);
     }
 
     @Override
