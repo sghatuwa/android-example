@@ -1,14 +1,12 @@
 package com.example.myjavaapps;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,28 +14,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myjavaapps.activity.DashBoard;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.myjavaapps.activity.Home;
 import com.example.myjavaapps.activity.Signup;
 import com.example.myjavaapps.database.DatabaseHelper;
+import com.example.myjavaapps.receiver.ConnectionReceiver;
 import com.example.myjavaapps.utils.Utils;
 
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -50,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
     DatabaseHelper databaseHelper = new DatabaseHelper(this);
+    ConnectionReceiver receiver;
+    IntentFilter intentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +54,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
         initUI();
         buttonClickListener();
+        receiver = new ConnectionReceiver();
+        intentFilter = new IntentFilter("com.example.myjavaapps.SOME_ACTION");
+        registerReceiver(receiver, intentFilter);
+
+        Intent intent = new Intent("com.example.myjavaapps.SOME_ACTION");
+        sendBroadcast(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 
     private void initPrefs() {
@@ -77,17 +86,17 @@ public class MainActivity extends AppCompatActivity {
                 String username = uname.getText().toString();
                 String pwd = password.getText().toString();
 
-                new ValidateLogin(view.getContext(), "", "").execute();
-//                if(databaseHelper.validateUser(username, pwd)){
-//                    Toast.makeText(MainActivity.this, "Congratulation", Toast.LENGTH_LONG).show();
-//                    editor.putBoolean(loggedIn, true);
-//                    editor.putString("username", username);
-//                    editor.apply();
-//                    startDashBoard();
-//                } else {
-//                    err_msg.setVisibility(View.VISIBLE);
-//                    Toast.makeText(MainActivity.this, "Opps!!! Sorry", Toast.LENGTH_LONG).show();
-//                }
+//                new ValidateLogin(view.getContext(), username, pwd).execute();
+                if(databaseHelper.validateUser(username, pwd)){
+                    Toast.makeText(MainActivity.this, "Congratulation", Toast.LENGTH_LONG).show();
+                    editor.putBoolean(loggedIn, true);
+                    editor.putString("username", username);
+                    editor.apply();
+                    startDashBoard();
+                } else {
+                    err_msg.setVisibility(View.VISIBLE);
+                    Toast.makeText(MainActivity.this, "Opps!!! Sorry", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -141,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             this.progressDialog = new ProgressDialog(context);
             this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            this.progressDialog.setMessage("Logging");
             this.progressDialog.setCancelable(false);
             this.progressDialog.show();
         }
@@ -153,21 +163,20 @@ public class MainActivity extends AppCompatActivity {
                         .put("password", "cityslicka");
                 URL url = new URL("https://reqres.in/api/login");
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                HttpsURLConnection  conn = (HttpsURLConnection ) url.openConnection();
                 conn.setReadTimeout(20000);
                 conn.setConnectTimeout(20000);
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; utf-8");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 conn.setRequestProperty("Accept", "application/json");
-                conn.setDoInput(true);
                 conn.setDoOutput(true);
 
+                // Write Request to output stream to server.
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(os, "UTF-8"));
-                writer.write(postDataParams.toString());
-                writer.flush();
-                writer.close();
+                os.write(postDataParams.toString().getBytes("UTF-8"));
+                os.flush();
                 os.close();
+                conn.connect();
 
                 int responseCode=conn.getResponseCode();
                 System.out.println("responseCode = " + responseCode);
@@ -180,6 +189,9 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(line);
                         break;
                     }
+                    System.out.println("sb: "+sb);
+                    JSONObject js = new JSONObject(sb.toString());
+                    System.out.println("js.get(toke); = " + js.get("token"));
                     in.close();
                     return true;
                 }
@@ -196,6 +208,16 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean aBoolean) {
             Toast.makeText(context, "Status: "+aBoolean, Toast.LENGTH_SHORT).show();
             this.progressDialog.dismiss();
+            if(aBoolean){
+                    Toast.makeText(MainActivity.this, "Congratulation", Toast.LENGTH_LONG).show();
+                    editor.putBoolean(loggedIn, true);
+                    editor.putString("username", this.uname);
+                    editor.apply();
+                    startDashBoard();
+                } else {
+                    err_msg.setVisibility(View.VISIBLE);
+                    Toast.makeText(MainActivity.this, "Opps!!! Sorry", Toast.LENGTH_LONG).show();
+                }
         }
     }
 }
