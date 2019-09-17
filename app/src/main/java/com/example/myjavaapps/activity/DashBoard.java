@@ -13,16 +13,19 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -52,13 +55,14 @@ import java.util.Map;
 
 public class DashBoard extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    Button showDate, showTime, change_image, context_menu, popupmenu, check_switch;
+    Button showDate, showTime, change_image, context_menu, popupmenu, check_switch, add_textview;
     TextView setDate, setTime;
     ImageView image;
     WebView webview;
     Spinner spinner, dynamicSpinner;
     ToggleButton toggleButton;
     Switch aSwitch;
+    LinearLayout dynamic_add;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,6 +107,17 @@ public class DashBoard extends AppCompatActivity implements PopupMenu.OnMenuItem
                 popupMenu.inflate(R.menu.dashboard_popupmenu);
                 popupMenu.setOnMenuItemClickListener(DashBoard.this);
                 popupMenu.show();
+            }
+        });
+        add_textview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create TextView programmatically.
+                TextView textView = new TextView(v.getContext());
+                textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                textView.setGravity(Gravity.CENTER);
+                textView.setText("Dynamic");
+                dynamic_add.addView(textView);
             }
         });
     }
@@ -184,6 +199,8 @@ public class DashBoard extends AppCompatActivity implements PopupMenu.OnMenuItem
         check_switch = findViewById(R.id.check_switch);
         toggleButton = findViewById(R.id.toggle_btn);
         aSwitch = findViewById(R.id.fine);
+        dynamic_add = findViewById(R.id.dynamic_add);
+        add_textview = findViewById(R.id.add_textview);
         registerForContextMenu(context_menu);
         registerForContextMenu(change_image);
     }

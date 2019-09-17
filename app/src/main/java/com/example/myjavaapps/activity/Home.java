@@ -34,6 +34,7 @@ import com.example.myjavaapps.MainActivity;
 import com.example.myjavaapps.R;
 import com.example.myjavaapps.data.User;
 import com.example.myjavaapps.database.DatabaseHelper;
+import com.example.myjavaapps.services.ForegroundService;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -50,7 +51,9 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Home extends AppCompatActivity {
 
-    Button edit, reset, collection, custom_list, module_dialog, download_file, play_songs, storetosd, view_Constraint;
+    Button edit, reset, collection, custom_list, module_dialog,
+            download_file, play_songs, storetosd, view_Constraint,
+            enable_service, disable_service;
     EditText email, username, password, confirm_password;
     RadioButton male, female;
     VideoView vid;
@@ -84,6 +87,8 @@ public class Home extends AppCompatActivity {
         play_songs = findViewById(R.id.play_songs);
         storetosd = findViewById(R.id.storetosd);
         view_Constraint = findViewById(R.id.view_Constraint);
+        enable_service = findViewById(R.id.enable_service);
+        disable_service = findViewById(R.id.disable_service);
         password = findViewById(R.id.password);
         username = findViewById(R.id.username);
         confirm_password = findViewById(R.id.confirm_password);
@@ -183,6 +188,32 @@ public class Home extends AppCompatActivity {
                 startActivity(new Intent(Home.this, Login.class));
             }
         });
+
+        enable_service.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startService();
+            }
+        });
+
+        disable_service.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService();
+            }
+        });
+    }
+
+    public void startService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        stopService(serviceIntent);
     }
 
     public void generateNoteOnSD(Context context, String sFileName, String sBody) {

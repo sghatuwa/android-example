@@ -139,6 +139,18 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/view_Constraint"
                 android:text="View Constraint" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/enable_service"
+                android:text="Enable Service" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/disable_service"
+                android:text="Disable Service" />
         </LinearLayout>
     </HorizontalScrollView>
 

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -53,6 +54,11 @@
             android:name=".services.NetworkSchedulerService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service
+            android:name=".services.ForegroundService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
